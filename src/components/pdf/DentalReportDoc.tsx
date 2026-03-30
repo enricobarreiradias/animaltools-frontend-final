@@ -39,6 +39,12 @@ export interface ToothData {
   gingivitisEdema: number;
   gingivitisColor: number;
   abnormalColor: number;
+  // Novos campos
+  groove: number; // Ranhura
+  gingivitis: number; // Gengivite
+  necrotizingGingivitis: number; // Gengivite Necrosante
+  necrotizingPeriodontitis: number; // Periodontite Necrosante
+  pericoronitis: number; // Pericoronarite
 }
 
 export interface ReportData {
@@ -63,7 +69,6 @@ export interface ReportData {
   teeth: ToothData[];
 }
 
-// Adicionado user para receber quem está emitindo
 interface ReportProps {
   data: ReportData;
   user?: { name: string };
@@ -212,7 +217,13 @@ export const DentalReportDoc = ({ data, user }: ReportProps) => {
       t.vitrifiedBorder > 0 ||
       t.pulpChamberExposure > 0 ||
       t.gingivitisEdema > 0 ||
-      (t.abnormalColor && t.abnormalColor > 0)
+      (t.abnormalColor && t.abnormalColor > 0) ||
+      // Novos campos
+      (t.groove && t.groove > 0) ||
+      (t.gingivitis && t.gingivitis > 0) ||
+      (t.necrotizingGingivitis && t.necrotizingGingivitis > 0) ||
+      (t.necrotizingPeriodontitis && t.necrotizingPeriodontitis > 0) ||
+      (t.pericoronitis && t.pericoronitis > 0)
     );
   });
 
@@ -224,14 +235,10 @@ export const DentalReportDoc = ({ data, user }: ReportProps) => {
           <Image src="/logoFull.png" style={styles.logoConfig} />
           <View style={styles.titleBlock}>
             <Text style={styles.title}>Laudo Odontológico Individual</Text>
-
-            {/* Linha 1: Dados da Avaliação */}
             <Text style={styles.subtitle}>
               Ref: #{data.id} • Avaliado em:{" "}
               {new Date(data.evaluationDate).toLocaleDateString("pt-BR")}
             </Text>
-
-            {/* Linha 2: QUEM ESTÁ EMITINDO  */}
             <Text style={styles.subtitle}>
               Emissão: {new Date().toLocaleDateString("pt-BR")} por{" "}
               {user?.name || "Sistema"}
@@ -330,6 +337,8 @@ export const DentalReportDoc = ({ data, user }: ReportProps) => {
               {unhealthyTeeth.map((t, i) => (
                 <View key={i} style={styles.toothCard}>
                   <Text style={styles.toothTitle}>Dente {t.toothCode}</Text>
+
+                  {/* Alterações Dentárias */}
                   {t.fractureLevel > 0 && (
                     <Text style={styles.pathologyText}>
                       • Fratura: Grau {t.fractureLevel}
@@ -340,27 +349,12 @@ export const DentalReportDoc = ({ data, user }: ReportProps) => {
                       • Pulpite: Grau {t.pulpitis}
                     </Text>
                   )}
-                  {t.gingivalRecessionLevel > 0 && (
-                    <Text style={styles.pathologyText}>
-                      • Recessão Gengival: Grau {t.gingivalRecessionLevel}
-                    </Text>
-                  )}
                   {t.caries > 0 && (
                     <Text style={styles.pathologyText}>• Cárie Detectada</Text>
                   )}
                   {t.crownReductionLevel > 0 && (
                     <Text style={styles.pathologyText}>
                       • Redução de Coroa: Grau {t.crownReductionLevel}
-                    </Text>
-                  )}
-                  {t.dentalCalculus > 0 && (
-                    <Text style={styles.pathologyText}>
-                      • Cálculo Dentário: Grau {t.dentalCalculus}
-                    </Text>
-                  )}
-                  {t.periodontalLesions > 0 && (
-                    <Text style={styles.pathologyText}>
-                      • Lesão Periodontal: Grau {t.periodontalLesions}
                     </Text>
                   )}
                   {t.lingualWear > 0 && (
@@ -380,12 +374,61 @@ export const DentalReportDoc = ({ data, user }: ReportProps) => {
                       • Exp. Câmara Pulpar (CRÍTICO)
                     </Text>
                   )}
-                  {t.gingivitisEdema > 0 && (
-                    <Text style={styles.pathologyText}>• Edema Gengival</Text>
-                  )}
                   {t.abnormalColor > 0 && (
                     <Text style={styles.pathologyText}>
                       • Coloração Anormal
+                    </Text>
+                  )}
+                  {t.groove > 0 && (
+                    <Text style={styles.pathologyText}>
+                      • Ranhura: Grau {t.groove}
+                    </Text>
+                  )}
+
+                  {/* Alterações Periodontais */}
+                  {t.gingivalRecessionLevel > 0 && (
+                    <Text style={styles.pathologyText}>
+                      • Recessão Gengival: Grau {t.gingivalRecessionLevel}
+                    </Text>
+                  )}
+                  {t.periodontalLesions > 0 && (
+                    <Text style={styles.pathologyText}>
+                      • Lesão Periodontal: Grau {t.periodontalLesions}
+                    </Text>
+                  )}
+
+                  {/* Alterações Gengivais */}
+                  {t.gingivitisEdema > 0 && (
+                    <Text style={styles.pathologyText}>• Edema Gengival</Text>
+                  )}
+                  {t.dentalCalculus > 0 && (
+                    <Text style={styles.pathologyText}>
+                      • Cálculo Dentário: Grau {t.dentalCalculus}
+                    </Text>
+                  )}
+                  {t.gingivitis > 0 && (
+                    <Text style={styles.pathologyText}>
+                      • Gengivite: Grau {t.gingivitis}
+                    </Text>
+                  )}
+                  {t.necrotizingGingivitis > 0 && (
+                    <Text
+                      style={[styles.pathologyText, styles.pathologyTextBold]}
+                    >
+                      • Gengivite Necrosante: Grau {t.necrotizingGingivitis}
+                    </Text>
+                  )}
+                  {t.necrotizingPeriodontitis > 0 && (
+                    <Text
+                      style={[styles.pathologyText, styles.pathologyTextBold]}
+                    >
+                      • Periodontite Necrosante: Grau{" "}
+                      {t.necrotizingPeriodontitis}
+                    </Text>
+                  )}
+                  {t.pericoronitis > 0 && (
+                    <Text style={styles.pathologyText}>
+                      • Pericoronarite: Grau {t.pericoronitis}
                     </Text>
                   )}
                 </View>

@@ -2,33 +2,35 @@
 
 import { Box, Paper, Typography, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ToothCode } from "../types/dental";
-
-const SeverityScale = {
-  NONE: 0,
-  MODERATE: 1,
-  SEVERE: 2,
-};
+import { ToothCode, SeverityScale } from "../types/dental";
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getToothSeverity = (data: any) => {
   if (!data || !data.isPresent) return SeverityScale.NONE;
 
-  // Lista de campos que influenciam a cor do dente
+  // --- ALTERAÇÃO AQUI: Adicionamos os novos campos na lista de severidade ---
   const severityValues = [
-    data.fractureLevel,
-    data.pulpitis,
     data.crownReductionLevel,
-    data.gingivalRecessionLevel,
     data.lingualWear,
-    data.periodontalLesions,
+    data.pulpChamberExposure,
+    data.fractureLevel,
+    data.dentalCalculus,
+    data.pulpitis,
+    data.groove, // Novo
+    data.vitrifiedBorder,
     data.caries,
+    data.periodontalLesions,
+    data.gingivitis, // Novo
+    data.necrotizingGingivitis, // Novo
+    data.necrotizingPeriodontitis, // Novo
+    data.gingivitisEdema,
+    data.pericoronitis, // Novo
   ];
 
   return Math.max(...severityValues.map((v) => Number(v) || 0));
 };
 
-// 2. Cores baseadas na nova severidade (0, 1, 2)
+// Cores baseadas na severidade
 const getSeverityColor = (level: number) => {
   if (level >= SeverityScale.SEVERE) return "#ef4444";
   if (level === SeverityScale.MODERATE) return "#facc15";
@@ -69,18 +71,20 @@ export default function DentalArch({
   selectedTooth,
   onSelectTooth,
 }: DentalArchProps) {
-  // Ordem anatômica: Canto Esq -> Centro <- Canto Dir
-  const leftTeeth = [
-    ToothCode.I4_LEFT,
-    ToothCode.I3_LEFT,
-    ToothCode.I2_LEFT,
-    ToothCode.I1_LEFT,
-  ];
-  const rightTeeth = [
-    ToothCode.I1_RIGHT,
-    ToothCode.I2_RIGHT,
-    ToothCode.I3_RIGHT,
+  // Lado Esquerdo da TELA (Corresponde ao lado DIREITO do animal na foto frontal)
+  const screenLeftTeeth = [
     ToothCode.I4_RIGHT,
+    ToothCode.I3_RIGHT,
+    ToothCode.I2_RIGHT,
+    ToothCode.I1_RIGHT,
+  ];
+
+  // Lado Direito da TELA (Corresponde ao lado ESQUERDO do animal na foto frontal)
+  const screenRightTeeth = [
+    ToothCode.I1_LEFT,
+    ToothCode.I2_LEFT,
+    ToothCode.I3_LEFT,
+    ToothCode.I4_LEFT,
   ];
 
   const renderTooth = (code: string, label: string) => {
@@ -88,7 +92,8 @@ export default function DentalArch({
 
     const maxSeverity = getToothSeverity(data);
 
-    const displayCode = code.split("_")[0];
+    // O displayCode pega apenas o prefixo (Ex: "I1_L" vira "I1")
+    const displayCode = code.split("_")[0].replace(/\D/g, ""); // "1", "2"...
 
     return (
       <Tooltip title={`${label} - ${code}`} key={code} placement="top">
@@ -137,13 +142,15 @@ export default function DentalArch({
       alignItems="center"
     >
       <Typography variant="overline" color="text.secondary" gutterBottom>
-        Arcada Inferior (Incisivos)
+        Arcada Inferior (Visão Frontal Espelhada)
       </Typography>
 
       <Box display="flex" gap={4} mt={2}>
-        {/* Lado Esquerdo */}
+        {/* Lado Esquerdo da TELA renderiza os dentes DIREITOS */}
         <Box display="flex" gap={1}>
-          {leftTeeth.map((code) => renderTooth(code, "Lado Esquerdo"))}
+          {screenLeftTeeth.map((code) =>
+            renderTooth(code, "Lado Direito do Animal"),
+          )}
         </Box>
 
         {/* Divisor Central (Linha média) */}
@@ -155,9 +162,11 @@ export default function DentalArch({
           alignSelf="center"
         />
 
-        {/* Lado Direito */}
+        {/* Lado Direito da TELA renderiza os dentes ESQUERDOS */}
         <Box display="flex" gap={1}>
-          {rightTeeth.map((code) => renderTooth(code, "Lado Direito"))}
+          {screenRightTeeth.map((code) =>
+            renderTooth(code, "Lado Esquerdo do Animal"),
+          )}
         </Box>
       </Box>
 

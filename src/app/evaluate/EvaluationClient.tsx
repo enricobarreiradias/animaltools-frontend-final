@@ -57,20 +57,26 @@ const initialToothState = {
   isPresent: true,
   toothType: ToothType.DECIDUOUS,
 
-  fractureLevel: SeverityScale.NONE,
-  pulpitis: SeverityScale.NONE,
+  // --- NOVA ORDEM DO CLIENTE ---
   crownReductionLevel: SeverityScale.NONE,
-  gingivalRecessionLevel: SeverityScale.NONE,
   lingualWear: SeverityScale.NONE,
-  periodontalLesions: SeverityScale.NONE,
-  vitrifiedBorder: SeverityScale.NONE,
   pulpChamberExposure: SeverityScale.NONE,
-  gingivitisEdema: SeverityScale.NONE,
+  fractureLevel: SeverityScale.NONE,
   dentalCalculus: SeverityScale.NONE,
+  pulpitis: SeverityScale.NONE,
+  groove: SeverityScale.NONE, // NOVO
+  vitrifiedBorder: SeverityScale.NONE,
   caries: SeverityScale.NONE,
-
-  gingivitisColor: ColorScale.NORMAL,
   abnormalColor: ColorScale.NORMAL,
+  periodontalLesions: SeverityScale.NONE,
+  gingivitis: SeverityScale.NONE, // NOVO
+  necrotizingGingivitis: SeverityScale.NONE, // NOVO
+  necrotizingPeriodontitis: SeverityScale.NONE, // NOVO
+  gingivitisEdema: SeverityScale.NONE,
+  pericoronitis: SeverityScale.NONE, // NOVO
+
+  gingivalRecessionLevel: SeverityScale.NONE,
+  gingivitisColor: ColorScale.NORMAL,
 };
 
 export default function EvaluationClient({
@@ -923,6 +929,7 @@ export default function EvaluationClient({
 
                     {currentToothData?.isPresent ? (
                       <Stack spacing={4}>
+                        {/* ESTÁGIO DE DESENVOLVIMENTO (Mantido igual) */}
                         <Box
                           bgcolor="#f8fafc"
                           p={2}
@@ -947,7 +954,7 @@ export default function EvaluationClient({
                             fullWidth
                             size="small"
                             color="primary"
-                            disabled={isReadOnly} // Bloqueia se for leitura
+                            disabled={isReadOnly}
                           >
                             <ToggleButton value={ToothType.DECIDUOUS}>
                               🦷 Dente de Leite
@@ -958,63 +965,27 @@ export default function EvaluationClient({
                           </ToggleButtonGroup>
                         </Box>
 
-                        <Box>
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            gap={1}
-                            mb={2}
+                        {/* LISTA UNIFICADA DE PARÂMETROS - NOVA ORDEM */}
+                        <Box
+                          bgcolor="#f9fafb"
+                          p={2}
+                          borderRadius={2}
+                          border="1px solid #e2e8f0"
+                        >
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            fontWeight="bold"
+                            display="block"
+                            mb={3}
                           >
-                            <Avatar
-                              sx={{
-                                bgcolor: "error.light",
-                                width: 24,
-                                height: 24,
-                                fontSize: 12,
-                              }}
-                            >
-                              !
-                            </Avatar>
-                            <Typography
-                              variant="subtitle1"
-                              fontWeight="bold"
-                              color="error.main"
-                            >
-                              Parâmetros Críticos
-                            </Typography>
-                          </Box>
+                            PARÂMETROS CLÍNICOS
+                          </Typography>
+
                           <Grid container spacing={3}>
                             <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
-                                label="Fratura"
-                                value={currentToothData.fractureLevel}
-                                onChange={(v) =>
-                                  updateTooth("fractureLevel", v)
-                                }
-                                disabled={isReadOnly}
-                              />
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 6 }}>
-                              <SeveritySelector
-                                label="Pulpite (Inflamação)"
-                                value={currentToothData.pulpitis}
-                                onChange={(v) => updateTooth("pulpitis", v)}
-                                disabled={isReadOnly}
-                              />
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 6 }}>
-                              <SeveritySelector
-                                label="Recessão Gengival (Raiz)"
-                                value={currentToothData.gingivalRecessionLevel}
-                                onChange={(v) =>
-                                  updateTooth("gingivalRecessionLevel", v)
-                                }
-                                disabled={isReadOnly}
-                              />
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 6 }}>
-                              <SeveritySelector
-                                label="Redução de Coroa"
+                                label="Desgaste da Coroa"
                                 value={currentToothData.crownReductionLevel}
                                 onChange={(v) =>
                                   updateTooth("crownReductionLevel", v)
@@ -1022,33 +993,6 @@ export default function EvaluationClient({
                                 disabled={isReadOnly}
                               />
                             </Grid>
-                          </Grid>
-                        </Box>
-
-                        <Divider />
-
-                        <Box>
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            gap={1}
-                            mb={2}
-                          >
-                            <Avatar
-                              sx={{
-                                bgcolor: "primary.light",
-                                width: 24,
-                                height: 24,
-                                fontSize: 12,
-                              }}
-                            >
-                              2
-                            </Avatar>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                              Outros Indicadores
-                            </Typography>
-                          </Box>
-                          <Grid container spacing={3}>
                             <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
                                 label="Desgaste Lingual"
@@ -1059,10 +1003,20 @@ export default function EvaluationClient({
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
-                                label="Lesões Periodontais"
-                                value={currentToothData.periodontalLesions}
+                                label="Exp. Câmara Pulpar"
+                                value={currentToothData.pulpChamberExposure}
                                 onChange={(v) =>
-                                  updateTooth("periodontalLesions", v)
+                                  updateTooth("pulpChamberExposure", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Fratura"
+                                value={currentToothData.fractureLevel}
+                                onChange={(v) =>
+                                  updateTooth("fractureLevel", v)
                                 }
                                 disabled={isReadOnly}
                               />
@@ -1079,47 +1033,21 @@ export default function EvaluationClient({
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
-                                label="Cárie"
-                                value={currentToothData.caries}
-                                onChange={(v) => updateTooth("caries", v)}
-                                disabled={isReadOnly}
-                              />
-                            </Grid>
-
-                            <Grid size={{ xs: 12, sm: 6 }}>
-                              <ColorSelector
-                                label="Cor da Gengiva"
-                                value={currentToothData.gingivitisColor}
-                                onChange={(v) =>
-                                  updateTooth("gingivitisColor", v)
-                                }
+                                label="Pulpite"
+                                value={currentToothData.pulpitis}
+                                onChange={(v) => updateTooth("pulpitis", v)}
                                 disabled={isReadOnly}
                               />
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6 }}>
-                              <ColorSelector
-                                label="Cor do Dente"
-                                value={currentToothData.abnormalColor}
-                                onChange={(v) =>
-                                  updateTooth("abnormalColor", v)
-                                }
+                              <SeveritySelector
+                                label="Ranhura"
+                                value={currentToothData.groove}
+                                onChange={(v) => updateTooth("groove", v)}
                                 disabled={isReadOnly}
                               />
                             </Grid>
-                          </Grid>
-                        </Box>
-
-                        <Box bgcolor="#f9fafb" p={2} borderRadius={2}>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            display="block"
-                            mb={2}
-                          >
-                            DETALHES ESPECÍFICOS{" "}
-                          </Typography>
-                          <Grid container spacing={2}>
-                            <Grid size={{ xs: 6 }}>
+                            <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
                                 label="Bordo Vitrificado"
                                 value={currentToothData.vitrifiedBorder}
@@ -1129,22 +1057,100 @@ export default function EvaluationClient({
                                 disabled={isReadOnly}
                               />
                             </Grid>
-                            <Grid size={{ xs: 6 }}>
+                            <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
-                                label="Exp. Câmara Pulpar"
-                                value={currentToothData.pulpChamberExposure}
+                                label="Cárie"
+                                value={currentToothData.caries}
+                                onChange={(v) => updateTooth("caries", v)}
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <ColorSelector
+                                label="Alteração de Cor"
+                                value={currentToothData.abnormalColor}
                                 onChange={(v) =>
-                                  updateTooth("pulpChamberExposure", v)
+                                  updateTooth("abnormalColor", v)
                                 }
                                 disabled={isReadOnly}
                               />
                             </Grid>
-                            <Grid size={{ xs: 12 }}>
+                            {/* <Grid size={{ xs: 12, sm: 6 }}>
+                              <ColorSelector
+                                label="Cor da Gengiva"
+                                value={currentToothData.gingivitisColor}
+                                onChange={(v) =>
+                                  updateTooth("gingivitisColor", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid> */}
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Periodontite"
+                                value={currentToothData.periodontalLesions}
+                                onChange={(v) =>
+                                  updateTooth("periodontalLesions", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Gengivite"
+                                value={currentToothData.gingivitis}
+                                onChange={(v) => updateTooth("gingivitis", v)}
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Gengivite Necrosante"
+                                value={currentToothData.necrotizingGingivitis}
+                                onChange={(v) =>
+                                  updateTooth("necrotizingGingivitis", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Periodontite Necrosante"
+                                value={
+                                  currentToothData.necrotizingPeriodontitis
+                                }
+                                onChange={(v) =>
+                                  updateTooth("necrotizingPeriodontitis", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
                               <SeveritySelector
                                 label="Edema Gengival"
                                 value={currentToothData.gingivitisEdema}
                                 onChange={(v) =>
                                   updateTooth("gingivitisEdema", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Recessão Gengival"
+                                value={currentToothData.gingivalRecessionLevel}
+                                onChange={(v) =>
+                                  updateTooth("gingivalRecessionLevel", v)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <SeveritySelector
+                                label="Pericoronarite"
+                                value={currentToothData.pericoronitis}
+                                onChange={(v) =>
+                                  updateTooth("pericoronitis", v)
                                 }
                                 disabled={isReadOnly}
                               />

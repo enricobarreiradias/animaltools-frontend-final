@@ -14,17 +14,23 @@ interface ResearchTooth {
   isPresent: boolean;
   crownReductionLevel: number;
   lingualWear: number;
-  gingivalRecessionLevel: number;
-  periodontalLesions: number;
-  fractureLevel: number;
-  pulpitis: number;
-  vitrifiedBorder: number;
   pulpChamberExposure: number;
-  gingivitisEdema: number;
-  gingivitisColor: number;
+  fractureLevel: number;
   dentalCalculus: number;
-  abnormalColor: number;
+  pulpitis: number;
+  groove: number; // NOVO: Ranhura
+  vitrifiedBorder: number;
   caries: number;
+  abnormalColor: number;
+  periodontalLesions: number;
+  gingivitis: number; // NOVO: Gengivite
+  necrotizingGingivitis: number; // NOVO: Gengivite Necrosante
+  necrotizingPeriodontitis: number; // NOVO: Periodontite Necrosante
+  gingivitisEdema: number;
+  pericoronitis: number; // NOVO: Pericoronarite
+  // Campos antigos mantidos por compatibilidade
+  gingivalRecessionLevel: number;
+  gingivitisColor: number;
 }
 
 interface ResearchEvaluation {
@@ -60,36 +66,38 @@ interface ResearchAnimal {
 
 // --- 2. PALETA DE CORES POR GRUPO DE COLUNAS ---
 const COLORS = {
-  // Cabeçalhos de grupo (linha de título das seções)
-  groupIdentification: "1A5276", // Azul escuro
-  groupOrigin: "1B4F72", // Azul médio
-  groupBiometrics: "4A235A", // Roxo
-  groupEvaluation: "1E8449", // Verde escuro
-  groupTooth: "784212", // Marrom
-  groupDentalIssues: "7B241C", // Vermelho escuro
-  groupGingivalIssues: "6C3483", // Lilás escuro
+  groupIdentification: "1A5276",
+  groupOrigin: "1B4F72",
+  groupBiometrics: "4A235A",
+  groupEvaluation: "1E8449",
+  groupTooth: "784212",
+  groupDentalIssues: "7B241C",
+  groupGingivalIssues: "6C3483",
 
-  // Cabeçalhos de coluna (linha de header real)
-  headerIdentification: "2E86C1", // Azul claro
-  headerOrigin: "2980B9", // Azul
-  headerBiometrics: "7D3C98", // Roxo claro
-  headerEvaluation: "27AE60", // Verde
-  headerTooth: "CA6F1E", // Laranja
-  headerDentalIssues: "E74C3C", // Vermelho
-  headerGingivalIssues: "8E44AD", // Lilás
+  headerIdentification: "2E86C1",
+  headerOrigin: "2980B9",
+  headerBiometrics: "7D3C98",
+  headerEvaluation: "27AE60",
+  headerTooth: "CA6F1E",
+  headerDentalIssues: "E74C3C",
+  headerGingivalIssues: "8E44AD",
 
-  // Linhas de dados (alternadas)
   rowEven: "EAF2FF",
   rowOdd: "FFFFFF",
 
-  // Resumo
   summaryHeader: "1C2833",
   summaryRow: "D5DBDB",
 };
 
-// Definição de colunas com grupo para formatação
+// --- 3. GRUPOS DE COLUNAS (atualizados para 43 colunas) ---
+// IDENTIFICAÇÃO:   1–8   (8 cols)
+// ORIGEM:          9–12  (4 cols)
+// BIOMÉTRICOS:    13–17  (5 cols)
+// AVALIAÇÃO:      18–22  (5 cols)
+// DENTE:          23–25  (3 cols)
+// ALT. DENTÁRIAS: 26–36  (11 cols) ← +1 (groove)
+// ALT. GENGIVAIS: 37–43  (7 cols)  ← +4 (gingivitis, necrotizingGingivitis, necrotizingPeriodontitis, pericoronitis)
 const COLUMN_GROUPS = [
-  // [índice_inicial, índice_final, cor_header, label_grupo]
   {
     start: 1,
     end: 8,
@@ -127,14 +135,14 @@ const COLUMN_GROUPS = [
   },
   {
     start: 26,
-    end: 35,
+    end: 36,
     color: COLORS.headerDentalIssues,
     groupColor: COLORS.groupDentalIssues,
     label: "ALTERAÇÕES DENTÁRIAS",
   },
   {
-    start: 36,
-    end: 38,
+    start: 37,
+    end: 43,
     color: COLORS.headerGingivalIssues,
     groupColor: COLORS.groupGingivalIssues,
     label: "ALTERAÇÕES GENGIVAIS",
@@ -142,7 +150,7 @@ const COLUMN_GROUPS = [
 ];
 
 const HEADERS = [
-  // IDENTIFICAÇÃO
+  // IDENTIFICAÇÃO (1–8)
   "ID Animal",
   "Brinco",
   "Chip",
@@ -151,28 +159,28 @@ const HEADERS = [
   "Status",
   "Raça",
   "Pelagem",
-  // ORIGEM
+  // ORIGEM (9–12)
   "Fazenda",
   "Cliente",
   "Lote",
   "Localização",
-  // BIOMÉTRICOS
+  // BIOMÉTRICOS (13–17)
   "Data Nascimento",
   "Idade (meses)",
   "Data Coleta",
   "Peso (kg)",
   "Escore Corporal",
-  // AVALIAÇÃO
+  // AVALIAÇÃO (18–22)
   "ID Avaliação",
   "Data Avaliação",
   "ID Veterinário",
   "Escore Gengivite Geral",
   "Observações",
-  // DENTE
+  // DENTE (23–25)
   "Código Dente",
   "Tipo Dente",
   "Presente",
-  // ALTERAÇÕES DENTÁRIAS
+  // ALTERAÇÕES DENTÁRIAS (26–36)
   "Fratura",
   "Pulpite",
   "Cáries",
@@ -183,10 +191,15 @@ const HEADERS = [
   "Borda Vitrificada",
   "Exposição da Polpa",
   "Cor Anormal",
-  // ALTERAÇÕES GENGIVAIS
+  "Ranhura", // NOVO: groove (col 36)
+  // ALTERAÇÕES GENGIVAIS (37–43)
   "Edema Gengival",
   "Cor Gengival",
   "Cálculo Dental",
+  "Gengivite", // NOVO: gingivitis (col 40)
+  "Gengivite Necrosante", // NOVO: necrotizingGingivitis (col 41)
+  "Periodontite Necrosante", // NOVO: necrotizingPeriodontitis (col 42)
+  "Pericoronarite", // NOVO: pericoronitis (col 43)
 ];
 
 export default function ResearchDataButton() {
@@ -209,7 +222,6 @@ export default function ResearchDataButton() {
     return types[type] || type;
   };
 
-  // Aplica estilo de célula de cabeçalho
   const styleHeaderCell = (
     cell: ExcelJS.Cell,
     bgColor: string,
@@ -240,7 +252,6 @@ export default function ResearchDataButton() {
     };
   };
 
-  // Aplica estilo de célula de dado
   const styleDataCell = (
     cell: ExcelJS.Cell,
     isEven: boolean,
@@ -288,7 +299,7 @@ export default function ResearchDataButton() {
 
       // ── ABA 1: DADOS COMPLETOS ──────────────────────────────────────────────
       const ws = wb.addWorksheet("Dados da Pesquisa", {
-        views: [{ state: "frozen", xSplit: 0, ySplit: 3 }], // Congela 3 primeiras linhas
+        views: [{ state: "frozen", xSplit: 0, ySplit: 3 }],
         pageSetup: { orientation: "landscape", fitToPage: true, fitToWidth: 1 },
       });
 
@@ -351,7 +362,7 @@ export default function ResearchDataButton() {
             const isEven = dataRowIdx % 2 === 0;
 
             const rowData = [
-              // IDENTIFICAÇÃO
+              // IDENTIFICAÇÃO (1–8)
               animal.id,
               animal.tagCode || "-",
               animal.chip || "-",
@@ -360,28 +371,28 @@ export default function ResearchDataButton() {
               animal.status || "-",
               animal.breed || "-",
               animal.coatColor || "-",
-              // ORIGEM
+              // ORIGEM (9–12)
               animal.farm || "-",
               animal.client || "-",
               animal.lot || "-",
               animal.location || "-",
-              // BIOMÉTRICOS
+              // BIOMÉTRICOS (13–17)
               formatDate(animal.birthDate),
               animal.age ?? "-",
               formatDate(animal.collectionDate),
               animal.currentWeight || "-",
               animal.bodyScore || "-",
-              // AVALIAÇÃO
+              // AVALIAÇÃO (18–22)
               evaluation.id,
               formatDate(evaluation.evaluationDate),
               evaluation.evaluatorUserId || "-",
               evaluation.generalGingivitisScore ?? "-",
               evaluation.generalObservations || "-",
-              // DENTE
+              // DENTE (23–25)
               tooth?.toothCode ?? "-",
               tooth ? translateToothType(tooth.toothType) : "-",
               tooth ? (tooth.isPresent ? "Sim" : "Não") : "-",
-              // ALTERAÇÕES DENTÁRIAS
+              // ALTERAÇÕES DENTÁRIAS (26–36)
               tooth?.fractureLevel ?? "-",
               tooth?.pulpitis ?? "-",
               tooth?.caries ?? "-",
@@ -392,10 +403,15 @@ export default function ResearchDataButton() {
               tooth?.vitrifiedBorder ?? "-",
               tooth?.pulpChamberExposure ?? "-",
               tooth?.abnormalColor ?? "-",
-              // ALTERAÇÕES GENGIVAIS
+              tooth?.groove ?? "-", // NOVO: Ranhura (col 36)
+              // ALTERAÇÕES GENGIVAIS (37–43)
               tooth?.gingivitisEdema ?? "-",
               tooth?.gingivitisColor ?? "-",
               tooth?.dentalCalculus ?? "-",
+              tooth?.gingivitis ?? "-", // NOVO: Gengivite (col 40)
+              tooth?.necrotizingGingivitis ?? "-", // NOVO: Gengivite Necrosante (col 41)
+              tooth?.necrotizingPeriodontitis ?? "-", // NOVO: Periodontite Necrosante (col 42)
+              tooth?.pericoronitis ?? "-", // NOVO: Pericoronarite (col 43)
             ];
 
             const row = ws.getRow(dataRowIdx);
@@ -403,13 +419,12 @@ export default function ResearchDataButton() {
               const cell = row.getCell(colI + 1);
               cell.value = value as ExcelJS.CellValue;
 
-              // Detecta se é numérico e se está alterado (valor > 0)
-              const isNumericCol = colI >= 25; // colunas de pontuação
+              // Colunas de pontuação começam na col 26 (índice 25)
+              const isNumericCol = colI >= 25;
               const isAlert =
                 typeof value === "number" && value > 0 && isNumericCol;
               styleDataCell(cell, isEven, isNumericCol, isAlert);
 
-              // Fonte negrita para ID do animal
               if (colI === 0) cell.font = { ...cell.font, bold: true };
             });
 
@@ -419,46 +434,22 @@ export default function ResearchDataButton() {
         });
       });
 
-      // ── LARGURAS DAS COLUNAS ──
+      // ── LARGURAS DAS COLUNAS (43 colunas) ──
       const colWidths = [
-        8,
-        12,
-        18,
-        18,
-        22,
-        10,
-        14,
-        12, // ID
-        22,
-        18,
-        16,
-        14, // Origem
-        14,
-        13,
-        14,
-        10,
-        13, // Biométricos
-        11,
-        14,
-        13,
-        16,
-        30, // Avaliação
-        12,
-        12,
-        9, // Dente
-        9,
-        9,
-        9,
-        14,
-        15,
-        15,
-        15,
-        14,
-        14,
-        12, // Dental
-        13,
-        12,
-        13, // Gengival
+        // IDENTIFICAÇÃO (8)
+        8, 12, 18, 18, 22, 10, 14, 12,
+        // ORIGEM (4)
+        22, 18, 16, 14,
+        // BIOMÉTRICOS (5)
+        14, 13, 14, 10, 13,
+        // AVALIAÇÃO (5)
+        11, 14, 13, 16, 30,
+        // DENTE (3)
+        12, 12, 9,
+        // ALTERAÇÕES DENTÁRIAS (11) — +1 groove
+        9, 9, 9, 14, 15, 15, 15, 14, 14, 12, 11,
+        // ALTERAÇÕES GENGIVAIS (7) — +4 novos
+        13, 12, 13, 12, 20, 22, 16,
       ];
       colWidths.forEach((w, i) => {
         ws.getColumn(i + 1).width = w;
@@ -497,7 +488,12 @@ export default function ResearchDataButton() {
                   t.periodontalLesions > 0 ||
                   t.gingivalRecessionLevel > 0 ||
                   t.dentalCalculus > 0 ||
-                  t.crownReductionLevel > 0,
+                  t.crownReductionLevel > 0 ||
+                  t.groove > 0 || // NOVO
+                  t.gingivitis > 0 || // NOVO
+                  t.necrotizingGingivitis > 0 || // NOVO
+                  t.necrotizingPeriodontitis > 0 || // NOVO
+                  t.pericoronitis > 0, // NOVO
               ).length || 0),
             0,
           ) || 0),
@@ -522,7 +518,6 @@ export default function ResearchDataButton() {
       sumTitle.alignment = { horizontal: "center", vertical: "middle" };
       wsSummary.getRow(1).height = 32;
 
-      // Linha de subtítulo
       wsSummary.mergeCells("A2:D2");
       const subTitle = wsSummary.getCell("A2");
       subTitle.value = `Gerado em: ${new Date().toLocaleDateString("pt-BR")} às ${new Date().toLocaleTimeString("pt-BR")}`;
@@ -535,7 +530,6 @@ export default function ResearchDataButton() {
       subTitle.alignment = { horizontal: "center" };
       wsSummary.getRow(2).height = 20;
 
-      // Dados do resumo
       const summaryRows = [
         ["📋 Total de Animais", totalAnimals, "animais avaliados"],
         ["🦷 Total de Avaliações", totalEvals, "avaliações realizadas"],
@@ -600,7 +594,6 @@ export default function ResearchDataButton() {
 
         row.height = 28;
 
-        // Bordas na linha
         [cellLabel, cellValue, cellNote].forEach((c) => {
           c.border = {
             top: { style: "thin", color: { argb: "FFD5D8DC" } },
@@ -645,7 +638,6 @@ export default function ResearchDataButton() {
         wsSummary.mergeCells(r, 1, r, 4);
       });
 
-      // Larguras das colunas da aba resumo
       [
         ["A", 38],
         ["B", 14],
@@ -655,7 +647,7 @@ export default function ResearchDataButton() {
         wsSummary.getColumn(col as string).width = w as number;
       });
 
-      // ── DOWNLOAD DO ARQUIVO ──────────────────────────────────────────────────
+      // ── DOWNLOAD ──────────────────────────────────────────────────────────
       const buffer = await wb.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

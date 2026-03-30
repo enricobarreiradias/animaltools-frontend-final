@@ -27,29 +27,30 @@ export enum ToothCode {
 
 export interface ToothEvaluationData {
   toothCode: ToothCode;
-
-  // Parâmetros Críticos e Visuais
-  fractureLevel: SeverityScale;
-  pulpitis: SeverityScale;
-  gingivalRecessionLevel: SeverityScale;
-  crownReductionLevel: SeverityScale;
-
-  // Outros Indicadores
-  lingualWear: SeverityScale;
-  periodontalLesions: SeverityScale;
-  vitrifiedBorder: SeverityScale;
-  pulpChamberExposure: SeverityScale;
-  gingivitisEdema: SeverityScale;
-  dentalCalculus: SeverityScale;
-  caries: SeverityScale;
-
-  // Cores
-  gingivitisColor: ColorScale;
-  abnormalColor: ColorScale;
-
-  // Metadados
-  toothType: ToothType;
   isPresent: boolean;
+  toothType: ToothType;
+
+  // Parâmetros (Nova Ordem do Cliente)
+  crownReductionLevel: SeverityScale;
+  lingualWear: SeverityScale;
+  pulpChamberExposure: SeverityScale;
+  fractureLevel: SeverityScale;
+  dentalCalculus: SeverityScale;
+  pulpitis: SeverityScale;
+  groove: SeverityScale; // Novo: Ranhura
+  vitrifiedBorder: SeverityScale;
+  caries: SeverityScale;
+  abnormalColor: ColorScale;
+  periodontalLesions: SeverityScale;
+  gingivitis: SeverityScale; // Novo: Gengivite
+  necrotizingGingivitis: SeverityScale; // Novo: Gengivite Necrosante
+  necrotizingPeriodontitis: SeverityScale; // Novo: Periodontite Necrosante
+  gingivitisEdema: SeverityScale;
+  pericoronitis: SeverityScale; // Novo: Pericoronarite
+
+  // Campos Antigos Ocultos (Mantidos para não quebrar compatibilidade)
+  gingivalRecessionLevel: SeverityScale;
+  gingivitisColor: ColorScale;
 }
 
 export interface EvaluationPayload {
